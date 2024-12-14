@@ -1,0 +1,23 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "clothes-discounts"
+main = "./server.ts"
+# workers_dev = true
+
+# https://developers.cloudflare.com/workers/platform/compatibility-dates
+compatibility_date = "2024-09-26"
+
+kv_namespaces = [{ binding = "cache", id = "cache" }]
+
+# 静的ファイルの置き場
+[assets]
+# https://developers.cloudflare.com/workers/static-assets/binding/
+directory = "./build/client"
+
+# Deploy前に実行されるコマンド
+[build]
+command = "npm run build"
+
+# 環境変数の設定
+[vars]
+GITHUB_OWNER = "edmundhung"
+GITHUB_REPO = "remix-cloudflare-template"
