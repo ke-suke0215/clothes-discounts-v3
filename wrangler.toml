@@ -6,7 +6,7 @@ main = "./server.ts"
 # https://developers.cloudflare.com/workers/platform/compatibility-dates
 compatibility_date = "2024-09-26"
 
-kv_namespaces = [{ binding = "cache", id = "cache" }]
+kv_namespaces = [{ binding = "cache", id = "43a0f0a09e634a62a243019b5d17a62d" }]
 
 # 静的ファイルの置き場
 [assets]
