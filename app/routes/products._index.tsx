@@ -23,7 +23,7 @@ export default function Index() {
 	const { products } = useLoaderData<typeof loader>();
 
 	return (
-		<div className="container mx-auto p-6">
+		<div className="container mx-auto max-w-5xl p-6">
 			<PageBreadcrumb currentPage="商品検索" items={[]} />
 			<h1 className="mb-6 text-2xl">商品一覧</h1>
 			<SearchForm />

@@ -18,7 +18,7 @@ export default function Index() {
 	};
 
 	return (
-		<div className="container mx-auto p-6 pt-10">
+		<div className="container mx-auto max-w-5xl p-6 pt-10">
 			<h1 className="mb-6 text-2xl">今日の割引商品</h1>
 			<SearchForm />
 			<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
