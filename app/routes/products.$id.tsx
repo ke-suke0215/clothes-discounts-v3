@@ -1,8 +1,11 @@
+import type { DiscountHistory } from '~/data/discount-histories';
+
 import { json, type LoaderFunctionArgs } from '@remix-run/node';
 import { useLoaderData, Link } from '@remix-run/react';
 import { products } from '~/data/products';
 import { Calendar } from '~/components/ui/calendar';
 import { PageBreadcrumb } from '~/components/page-breadcrumb';
+import { discountHistories } from '~/data/discount-histories';
 
 import invariant from 'tiny-invariant';
 
@@ -21,16 +24,12 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 export default function ProductDetail() {
 	const { product } = useLoaderData<typeof loader>();
 
-	// 今日から1日おきに3日間を選択
-	const today = new Date();
-	const selectedDates = [
-		today,
-		new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000),
-		new Date(today.getTime() + 4 * 24 * 60 * 60 * 1000),
-	];
+	const selectedDates = discountHistories.map(
+		(history: DiscountHistory) => history.date,
+	);
 
 	return (
-		<div className="container mx-auto p-6">
+		<div className="container mx-auto max-w-5xl p-6">
 			<PageBreadcrumb
 				currentPage="商品詳細"
 				items={[{ label: '商品検索', to: '/products' }]}
@@ -58,11 +57,10 @@ export default function ProductDetail() {
 							<Calendar
 								mode="multiple"
 								selected={selectedDates}
-								onSelect={() => {}}
 								className="w-fit"
 							/>
 						</div>
-						<div className="w-[250px] rounded-lg bg-white p-4">
+						<div className="mx-auto w-[270px] rounded-lg bg-white p-4">
 							<h2 className="mb-4 text-lg">割引履歴</h2>
 							<table className="w-full">
 								<thead>
@@ -72,18 +70,20 @@ export default function ProductDetail() {
 									</tr>
 								</thead>
 								<tbody className="divide-y">
-									<tr>
-										<td className="py-3">2024/01/27</td>
-										<td className="text-right">1,000円</td>
-									</tr>
-									<tr>
-										<td className="py-3">2024/01/28</td>
-										<td className="text-right">1,200円</td>
-									</tr>
-									<tr>
-										<td className="py-3">2024/01/29</td>
-										<td className="text-right">1,500円</td>
-									</tr>
+									{discountHistories.map(history => (
+										<tr key={history.date.getTime()}>
+											<td className="py-3">
+												{history.date.toLocaleDateString('ja-JP', {
+													year: 'numeric',
+													month: '2-digit',
+													day: '2-digit',
+												})}
+											</td>
+											<td className="text-right">
+												{history.price.toLocaleString()}円
+											</td>
+										</tr>
+									))}
 								</tbody>
 							</table>
 						</div>
