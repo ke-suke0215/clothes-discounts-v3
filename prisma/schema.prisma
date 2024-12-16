@@ -3,6 +3,8 @@
 
 generator client {
   provider = "prisma-client-js"
+  // 以下を記述しないと Prisma クライアントがアダプタを使用して D1 と通信できない
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {

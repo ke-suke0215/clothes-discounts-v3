@@ -1,31 +1,31 @@
+import { type AppLoadContext } from '@remix-run/cloudflare';
 import { type PlatformProxy } from 'wrangler';
+import { connection } from './app/database/client';
+
+type Cloudflare = Omit<PlatformProxy<Env>, 'dispose'> & {
+	caches:
+		| PlatformProxy<Env, IncomingRequestCfProperties>['caches']
+		| CacheStorage;
+};
 
 declare module '@remix-run/cloudflare' {
-	// eslint-disable-next-line @typescript-eslint/no-empty-interface
-	interface AppLoadContext extends ReturnType<typeof getLoadContext> {
-		// This will merge the result of `getLoadContext` into the `AppLoadContext`
+	interface AppLoadContext {
+		cloudflare: Cloudflare;
+		db: Awaited<ReturnType<typeof connection>>;
 	}
 }
 
-export function getLoadContext({
-	context,
-}: {
+type args = {
 	request: Request;
 	context: {
-		cloudflare: Omit<
-			PlatformProxy<Env, IncomingRequestCfProperties>,
-			'dispose' | 'caches'
-		> & {
-			caches:
-				| PlatformProxy<Env, IncomingRequestCfProperties>['caches']
-				| CacheStorage;
-		};
+		cloudflare: Cloudflare;
 	};
-}) {
+};
+type GetLoadContext = (args: args) => Promise<AppLoadContext>;
+
+export const getLoadContext: GetLoadContext = async ({ context }) => {
 	return {
-		env: context.cloudflare.env,
-		cf: context.cloudflare.cf,
-		ctx: context.cloudflare.ctx,
-		cache: context.cloudflare.caches,
+		...context,
+		db: await connection(context.cloudflare.env.DATABASE),
 	};
-}
+};

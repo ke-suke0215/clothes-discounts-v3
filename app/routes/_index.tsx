@@ -1,14 +1,25 @@
-import { type LoaderFunction, json } from '@remix-run/node';
+import {
+	type LoaderFunction,
+	type LoaderFunctionArgs,
+	json,
+} from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { SearchForm } from '~/components/search-form';
-import { type Product, products } from '~/data/products';
+import { type Product } from '~/data/products';
 import { ProductCard } from '~/components/product-card';
-import { PageBreadcrumb } from '~/components/page-breadcrumb';
 
-export const loader: LoaderFunction = async () => {
-	// 実際のAPIやデータベースからデータを取得する代わりに、ダミーデータを使用
-
-	return json({ products });
+export const loader: LoaderFunction = async ({
+	context,
+}: LoaderFunctionArgs) => {
+	try {
+		// TODO: 別ファイルでDBにアクセスする関数を作成し、それを利用する
+		const resolvedContext = await context; // Promiseを解決
+		const products = await resolvedContext.db.product.findMany();
+		return json({ products });
+	} catch (error) {
+		console.error('Failed to load products:', error);
+		throw new Response('Internal Server Error', { status: 500 });
+	}
 };
 
 // 当日の割引商品を表示する
