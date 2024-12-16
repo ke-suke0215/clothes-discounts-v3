@@ -1,5 +1,6 @@
 node_modules
 .env
+.DS_Store
 
 # Remix
 /.cache
@@ -16,3 +17,6 @@ worker-configuration.d.ts
 
 # Remix stacks
 /package-lock.json
+
+# DB file
+dev.sqlite3
