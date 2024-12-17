@@ -6,7 +6,7 @@ import {
 import { useLoaderData } from '@remix-run/react';
 import { SearchForm } from '~/components/search-form';
 import { type Product } from '~/data/products';
-import { ProductCard } from '~/components/product-card';
+import { ProductList } from '~/components/product-list';
 
 export const loader: LoaderFunction = async ({
 	context,
@@ -32,11 +32,7 @@ export default function Index() {
 		<div className="container mx-auto max-w-5xl p-6 pt-10">
 			<h1 className="mb-6 text-2xl">今日の割引商品</h1>
 			<SearchForm />
-			<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-				{products.map((product: Product) => (
-					<ProductCard key={product.id} product={product} />
-				))}
-			</div>
+			<ProductList products={products} />
 		</div>
 	);
 }
