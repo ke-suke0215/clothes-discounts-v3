@@ -16,7 +16,7 @@ model Product {
   id              Int              @id @default(autoincrement()) // 主キー、自動インクリメント
   productCode     String           @unique @map("product_code")  // 製品コード（一意制約）
   name            String                                         // 製品名
-  gender          Int                                            // 性別（0: unisex, 1: 男性, 2: 女性）
+  gender          Int                                            // 性別（0: unisex, 1: 女性, 2: 男性）
   officialUrl     String           @map("official_url")          // 製品の公式URL
   imageUrl        String           @map("image_url")             // 製品の画像URL
   createdAt       DateTime         @default(now()) @map("created_at")  // 作成日時
