@@ -5,27 +5,19 @@ import {
 } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { SearchForm } from '~/components/search-form';
-import { Product } from '~/backend/domain/models/product';
 import { ProductList } from '~/components/product-list';
 import { ProductType } from '~/types/product';
-// 動作確認用
-import { ProductRepository } from '~/backend/infrastructure/product-repository';
+import GetProductsByDiscountDateService from '~/backend/application/get-products-by-discount-date-service';
 
 export const loader: LoaderFunction = async ({
 	context,
 }: LoaderFunctionArgs) => {
 	try {
-		// TODO: 別ファイルでDBにアクセスする関数を作成し、それを利用する
 		const resolvedContext = await context; // Promiseを解決
-		// const products = await resolvedContext.db.product.findMany();
+		const service = new GetProductsByDiscountDateService(resolvedContext.db);
+		const products: ProductType[] = await service.execute(new Date());
 
-		const repository = new ProductRepository(resolvedContext.db);
-		const products: Product[] = await repository.findByIds([1, 10, 20, 30]); // とりあえず固定で取得
-		const plainProducts: ProductType[] = products.map(product =>
-			product.toPlain(),
-		);
-
-		return json({ products: plainProducts });
+		return json({ products });
 	} catch (error) {
 		console.error('Failed to load products:', error);
 		throw new Response('Internal Server Error', { status: 500 });
