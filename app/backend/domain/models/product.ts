@@ -1,6 +1,7 @@
-import Gender from './gender';
+import { Gender } from './gender';
+import { ProductType } from '~/types/product';
 
-export default class Product {
+export class Product {
 	readonly id: number;
 	readonly productCode: string;
 	readonly name: string;
@@ -29,5 +30,16 @@ export default class Product {
 		this._gender = new Gender(gender);
 		this.officialUrl = officialUrl;
 		this.imageUrl = imageUrl;
+	}
+
+	toPlain(): ProductType {
+		return {
+			id: this.id,
+			productCode: this.productCode,
+			name: this.name,
+			gender: this._gender.toPlain(),
+			officialUrl: this.officialUrl,
+			imageUrl: this.imageUrl,
+		};
 	}
 }

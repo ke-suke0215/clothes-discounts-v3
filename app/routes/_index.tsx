@@ -5,16 +5,18 @@ import {
 } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { SearchForm } from '~/components/search-form';
-import { type Product } from '~/data/products';
 import { ProductList } from '~/components/product-list';
+import { ProductType } from '~/types/product';
+import GetProductsByDiscountDateService from '~/backend/application/get-products-by-discount-date-service';
 
 export const loader: LoaderFunction = async ({
 	context,
 }: LoaderFunctionArgs) => {
 	try {
-		// TODO: 別ファイルでDBにアクセスする関数を作成し、それを利用する
 		const resolvedContext = await context; // Promiseを解決
-		const products = await resolvedContext.db.product.findMany();
+		const service = new GetProductsByDiscountDateService(resolvedContext.db);
+		const products: ProductType[] = await service.execute(new Date());
+
 		return json({ products });
 	} catch (error) {
 		console.error('Failed to load products:', error);
@@ -25,7 +27,7 @@ export const loader: LoaderFunction = async ({
 // 当日の割引商品を表示する
 export default function Index() {
 	const { products } = useLoaderData<typeof loader>() as {
-		products: Product[];
+		products: ProductType[];
 	};
 
 	return (
