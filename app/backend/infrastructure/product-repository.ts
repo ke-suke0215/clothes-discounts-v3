@@ -1,5 +1,5 @@
 import { Product } from '../domain/models/product';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, type Product as PrismaProduct } from '@prisma/client';
 
 export class ProductRepository {
 	private _db: PrismaClient;
@@ -16,18 +16,18 @@ export class ProductRepository {
 				},
 			},
 		});
-		return products.map(product => this.toEntity(product));
+		return products.map(this.build);
 	}
 
-	private toEntity(product: any): Product {
-		return new Product({
+	private build(product: PrismaProduct): Product {
+		return {
 			id: product.id,
 			productCode: product.productCode,
 			name: product.name,
 			gender: product.gender,
 			officialUrl: product.officialUrl,
 			imageUrl: product.imageUrl,
-		});
+		};
 	}
 
 	// 文字列の配列を指定して、nameで複合曖昧検索

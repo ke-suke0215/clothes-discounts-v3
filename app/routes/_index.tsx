@@ -6,16 +6,15 @@ import {
 import { useLoaderData } from '@remix-run/react';
 import { SearchForm } from '~/components/search-form';
 import { ProductList } from '~/components/product-list';
-import { ProductType } from '~/types/product';
+import { Product } from '~/backend/domain/models/product';
 import GetProductsByDiscountDateService from '~/backend/application/get-products-by-discount-date-service';
 
 export const loader: LoaderFunction = async ({
 	context,
 }: LoaderFunctionArgs) => {
 	try {
-		const resolvedContext = await context; // Promiseを解決
-		const service = new GetProductsByDiscountDateService(resolvedContext.db);
-		const products: ProductType[] = await service.execute(new Date());
+		const service = new GetProductsByDiscountDateService(await context.db);
+		const products: Product[] = await service.execute(new Date());
 
 		return json({ products });
 	} catch (error) {
@@ -27,7 +26,7 @@ export const loader: LoaderFunction = async ({
 // 当日の割引商品を表示する
 export default function Index() {
 	const { products } = useLoaderData<typeof loader>() as {
-		products: ProductType[];
+		products: Product[];
 	};
 
 	return (

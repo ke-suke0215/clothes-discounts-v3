@@ -1,7 +1,7 @@
 import { Link } from '@remix-run/react';
-import { ProductType } from '~/types/product';
+import { Product } from '~/backend/domain/models/product';
 
-export function ProductCard({ product }: { product: ProductType }) {
+export function ProductCard({ product }: { product: Product }) {
 	return (
 		<Link key={product.id} to={`/products/${product.id}`} className="block">
 			<div className="overflow-hidden rounded-lg border border-gray-200 transition-shadow duration-300 hover:shadow-lg">
