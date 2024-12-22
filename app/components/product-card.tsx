@@ -1,5 +1,5 @@
 import { Link } from '@remix-run/react';
-import { Product } from '~/backend/domain/models/product';
+import { type Product } from '~/backend/domain/models/product';
 
 export function ProductCard({ product }: { product: Product }) {
 	return (

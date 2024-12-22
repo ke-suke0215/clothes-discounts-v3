@@ -6,7 +6,7 @@ import {
 import { useLoaderData } from '@remix-run/react';
 import { SearchForm } from '~/components/search-form';
 import { ProductList } from '~/components/product-list';
-import { Product } from '~/backend/domain/models/product';
+import { type Product } from '~/backend/domain/models/product';
 import GetProductsByDiscountDateService from '~/backend/application/get-products-by-discount-date-service';
 
 export const loader: LoaderFunction = async ({

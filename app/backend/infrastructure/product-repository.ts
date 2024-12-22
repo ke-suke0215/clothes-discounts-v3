@@ -15,7 +15,32 @@ export class ProductRepository {
 					in: ids,
 				},
 			},
+			orderBy: {
+				id: 'asc',
+			},
 		});
+		return products.map(this.build);
+	}
+
+	// 文字列の配列を指定して、nameで複合曖昧検索
+	async findByName(keyWords: string[]): Promise<Product[]> {
+		if (keyWords.length === 0 || keyWords.every(keyword => keyword === '')) {
+			return [];
+		}
+
+		const products = await this._db.product.findMany({
+			where: {
+				AND: keyWords.map(keyword => ({
+					name: {
+						contains: keyword,
+					},
+				})),
+			},
+			orderBy: {
+				id: 'asc',
+			},
+		});
+
 		return products.map(this.build);
 	}
 
@@ -29,12 +54,4 @@ export class ProductRepository {
 			imageUrl: product.imageUrl,
 		};
 	}
-
-	// 文字列の配列を指定して、nameで複合曖昧検索
-	// findByName(names: string[]): Product[] {
-	// 	const lowerCaseNames = names.map(name => name.toLowerCase());
-	// 	return this.products.filter(product =>
-	// 		lowerCaseNames.some(name => product.name.toLowerCase().includes(name)),
-	// 	);
-	// }
 }
