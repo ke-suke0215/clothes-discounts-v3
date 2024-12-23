@@ -1,14 +1,27 @@
 import {
 	PrismaClient,
-	// type DiscountHistory as PrismaDiscountHistory,
+	type DiscountHistory as PrismaDiscountHistory,
 } from '@prisma/client';
-// import { DiscountHistory } from '../domain/models/discount-history';
+import { DiscountHistory } from '../domain/models/discount-history';
 
 export class DiscountHistoryRepository {
 	private _db: PrismaClient;
 
 	constructor(dbClient: PrismaClient) {
 		this._db = dbClient;
+	}
+
+	async findByProductId(productId: number): Promise<DiscountHistory[]> {
+		const discountHistories = await this._db.discountHistory.findMany({
+			where: {
+				productId: productId,
+			},
+			orderBy: {
+				id: 'asc',
+			},
+		});
+
+		return discountHistories.map(dh => this.build(dh));
 	}
 
 	async findProductIdsByDate(date: Date): Promise<number[]> {
@@ -25,7 +38,7 @@ export class DiscountHistoryRepository {
 		return discountHistories.map(dh => dh.productId);
 	}
 
-	// Date型をyyyymmddの数値に変換する
+	// Date型をyyyyMMddの数値に変換する
 	private dateToNumber(date: Date): number {
 		const year = date.getFullYear();
 		const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -33,23 +46,23 @@ export class DiscountHistoryRepository {
 		return parseInt(`${year}${month}${day}`);
 	}
 
-	// 以下は後々必要になるはず
+	// yyyyyMMddの数値をDate型に変換する
+	private numberToDate(yyyymmdd: number): Date {
+		const yyyymmddStr = String(yyyymmdd);
+		const year = parseInt(yyyymmddStr.slice(0, 4));
+		const month = parseInt(yyyymmddStr.slice(4, 6)) - 1;
+		const day = parseInt(yyyymmddStr.slice(6, 8));
 
-	// // yyyyymmddの数値をDate型に変換する
-	// private numberToDate(yyyymmdd: number): Date {
-	// 	const yyyymmddStr = String(yyyymmdd);
-	// 	const year = parseInt(yyyymmddStr.slice(0, 4));
-	// 	const month = parseInt(yyyymmddStr.slice(4, 6)) - 1;
-	// 	const day = parseInt(yyyymmddStr.slice(6, 8));
-	// 	return new Date(year, month, day);
-	// }
+		// JST（指定なし）だと時差によって-9時間されてしまうのでUTCで日付を生成
+		return new Date(Date.UTC(year, month, day));
+	}
 
-	// private build(history: PrismaDiscountHistory): DiscountHistory {
-	// 	return {
-	// 		id: history.id,
-	// 		productId: history.productId,
-	// 		date: this.numberToDate(history.date),
-	// 		price: history.price,
-	// 	};
-	// }
+	private build(history: PrismaDiscountHistory): DiscountHistory {
+		return {
+			id: history.id,
+			productId: history.productId,
+			date: this.numberToDate(history.date),
+			price: history.price,
+		};
+	}
 }

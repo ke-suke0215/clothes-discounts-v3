@@ -14,7 +14,12 @@ export function SearchForm() {
 	};
 
 	return (
-		<Form method="get" className="mb-6" onSubmit={handleSubmit}>
+		<Form
+			method="get"
+			action="/products"
+			className="mb-6"
+			onSubmit={handleSubmit}
+		>
 			<div className="flex gap-2">
 				<Input
 					type="search"

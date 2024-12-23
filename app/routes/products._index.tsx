@@ -1,3 +1,5 @@
+import type { Product } from '~/backend/domain/models/product';
+
 import {
 	LoaderFunction,
 	LoaderFunctionArgs,
@@ -5,7 +7,6 @@ import {
 } from '@remix-run/cloudflare';
 import { useLoaderData } from '@remix-run/react';
 import { SearchForm } from '~/components/search-form';
-import { type Product } from '~/backend/domain/models/product';
 import GetProductsByNameService from '~/backend/application/get-products-by-name';
 import { PageBreadcrumb } from '~/components/page-breadcrumb';
 import { ProductList } from '~/components/product-list';
@@ -16,7 +17,7 @@ export const loader: LoaderFunction = async ({
 }: LoaderFunctionArgs) => {
 	try {
 		const url = new URL(request.url);
-		const searchWord = url.searchParams.get('search'); // ?search=hoge の "hoge" を取得
+		const searchWord = url.searchParams.get('search');
 		if (searchWord === null) {
 			return json({ products: [] });
 		}

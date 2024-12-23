@@ -8,6 +8,15 @@ export class ProductRepository {
 		this._db = dbClient;
 	}
 
+	async findById(id: number): Promise<Product | null> {
+		const product = await this._db.product.findUnique({
+			where: {
+				id: id,
+			},
+		});
+		return product ? this.build(product) : null;
+	}
+
 	async findByIds(ids: number[]): Promise<Product[]> {
 		const products = await this._db.product.findMany({
 			where: {

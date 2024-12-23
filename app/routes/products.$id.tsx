@@ -1,31 +1,43 @@
-import type { DiscountHistory } from '~/data/discount-histories';
+import type { ProductWithDiscountHistoriesViewModel } from '~/backend/application/dto/product-with-discount-histories-view-model';
 
 import { json, type LoaderFunctionArgs } from '@remix-run/node';
-import { useLoaderData, Link } from '@remix-run/react';
-import { products } from '~/data/products';
+import { useLoaderData } from '@remix-run/react';
 import { Calendar } from '~/components/ui/calendar';
 import { PageBreadcrumb } from '~/components/page-breadcrumb';
-import { discountHistories } from '~/data/discount-histories';
-
+import GetProductByIdService from '~/backend/application/get-product-by-id-service';
 import invariant from 'tiny-invariant';
+import { ApplicationError } from '~/backend/errors/application-error';
+import { format } from 'date-fns';
+import { ja } from 'date-fns/locale';
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export const loader = async ({ params, context }: LoaderFunctionArgs) => {
 	invariant(params.id, 'Missing id param');
 	const productId = parseInt(params.id);
-	const product = products.find(p => p.id === productId);
 
-	if (!product) {
-		throw new Response('商品が見つかりません', { status: 404 });
+	console.log('id:', productId);
+	try {
+		const product = await new GetProductByIdService(await context.db).execute(
+			productId,
+		);
+		return json({ product });
+	} catch (error) {
+		console.error('Failed to load products:', error);
+
+		if (error instanceof ApplicationError) {
+			throw new Response(error.message, { status: error.status });
+		} else {
+			throw new Response('Internal Server Error', { status: 500 });
+		}
 	}
-
-	return json({ product });
 };
 
 export default function ProductDetail() {
-	const { product } = useLoaderData<typeof loader>();
+	const { product } = useLoaderData<typeof loader>() as {
+		product: ProductWithDiscountHistoriesViewModel;
+	};
 
-	const selectedDates = discountHistories.map(
-		(history: DiscountHistory) => history.date,
+	const selectedDates = product.discountHistories.map(
+		history => new Date(history.date),
 	);
 
 	return (
@@ -70,13 +82,11 @@ export default function ProductDetail() {
 									</tr>
 								</thead>
 								<tbody className="divide-y">
-									{discountHistories.map(history => (
-										<tr key={history.date.getTime()}>
+									{product.discountHistories.map(history => (
+										<tr key={history.date}>
 											<td className="py-3">
-												{history.date.toLocaleDateString('ja-JP', {
-													year: 'numeric',
-													month: '2-digit',
-													day: '2-digit',
+												{format(new Date(history.date), 'yyyy年MM月dd日', {
+													locale: ja,
 												})}
 											</td>
 											<td className="text-right">
