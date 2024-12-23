@@ -1,3 +1,4 @@
+# Default
 /.cache
 /.github
 /.husky
@@ -5,4 +6,27 @@
 /public
 /node_modules
 /dist
+
+# Basic
+/node_modules
+.env
+.DS_Store
+
+# Cloudflare
+.wrangler
+.dev.vars
+worker-configuration.d.ts
+
+# Playwright
+/test-results
+/playwright-report
+
+# Remix stacks
+/package-lock.json
+
+# DB file
+dev.sqlite3
+
+# other
 /app/styles/tailwind.css
+/app/components/ui

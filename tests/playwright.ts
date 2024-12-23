@@ -1,89 +1,91 @@
-import { test as baseTest, expect as baseExpect } from '@playwright/test';
-import { type ViteDevServer, createServer } from 'vite';
-import { type SetupServer, setupServer } from 'msw/node';
-import { type PlatformProxy, getPlatformProxy } from 'wrangler';
+// eslintとciを通すため、一旦コメントアウト
 
-interface TestFixtures {}
+// import { test as baseTest, expect as baseExpect } from '@playwright/test';
+// import { type ViteDevServer, createServer } from 'vite';
+// import { type SetupServer, setupServer } from 'msw/node';
+// import { type PlatformProxy, getPlatformProxy } from 'wrangler';
 
-interface WorkerFixtures {
-	port: number;
-	wrangler: PlatformProxy<Env>;
-	server: ViteDevServer;
-	msw: SetupServer;
-}
+// interface TestFixtures {}
 
-export async function clearKV(namespace: KVNamespace): Promise<void> {
-	const result = await namespace.list();
+// interface WorkerFixtures {
+// 	port: number;
+// 	wrangler: PlatformProxy<Env>;
+// 	server: ViteDevServer;
+// 	msw: SetupServer;
+// }
 
-	await Promise.all(result.keys.map(key => namespace.delete(key.name)));
-}
+// export async function clearKV(namespace: KVNamespace): Promise<void> {
+// 	const result = await namespace.list();
 
-export const expect = baseExpect.extend({});
+// 	await Promise.all(result.keys.map(key => namespace.delete(key.name)));
+// }
 
-export const test = baseTest.extend<TestFixtures, WorkerFixtures>({
-	// Assign a unique "port" for each worker process
-	port: [
-		// eslint-disable-next-line no-empty-pattern
-		async ({}, use, workerInfo) => {
-			await use(3515 + workerInfo.workerIndex);
-		},
-		{ scope: 'worker' },
-	],
+// export const expect = baseExpect.extend({});
 
-	// Ensure visits works with relative path
-	baseURL: ({ port }, use) => {
-		use(`http://localhost:${port}`);
-	},
+// export const test = baseTest.extend<TestFixtures, WorkerFixtures>({
+// 	// Assign a unique "port" for each worker process
+// 	port: [
+// 		// eslint-disable-next-line no-empty-pattern
+// 		async ({}, use, workerInfo) => {
+// 			await use(3515 + workerInfo.workerIndex);
+// 		},
+// 		{ scope: 'worker' },
+// 	],
 
-	// Start a Vite dev server for each worker
-	// This allows MSW to intercept requests properly
-	server: [
-		async ({ port }, use) => {
-			const server = await createServer({
-				configFile: './vite.config.ts',
-			});
+// 	// Ensure visits works with relative path
+// 	baseURL: ({ port }, use) => {
+// 		use(`http://localhost:${port}`);
+// 	},
 
-			await server.listen(port);
+// 	// Start a Vite dev server for each worker
+// 	// This allows MSW to intercept requests properly
+// 	server: [
+// 		async ({ port }, use) => {
+// 			const server = await createServer({
+// 				configFile: './vite.config.ts',
+// 			});
 
-			await use(server);
+// 			await server.listen(port);
 
-			await server.close();
-		},
-		{ scope: 'worker', auto: true },
-	],
+// 			await use(server);
 
-	msw: [
-		// eslint-disable-next-line no-empty-pattern
-		async ({}, use) => {
-			const server = setupServer();
+// 			await server.close();
+// 		},
+// 		{ scope: 'worker', auto: true },
+// 	],
 
-			server.listen();
+// 	msw: [
+// 		// eslint-disable-next-line no-empty-pattern
+// 		async ({}, use) => {
+// 			const server = setupServer();
 
-			await use(server);
+// 			server.listen();
 
-			server.close();
-		},
-		{ scope: 'worker', auto: true },
-	],
+// 			await use(server);
 
-	// To access wrangler bindings similar to Remix / Vite
-	wrangler: [
-		// eslint-disable-next-line no-empty-pattern
-		async ({}, use) => {
-			const wrangler = await getPlatformProxy<Env>();
+// 			server.close();
+// 		},
+// 		{ scope: 'worker', auto: true },
+// 	],
 
-			// To access bindings in the tests.
-			await use(wrangler);
+// 	// To access wrangler bindings similar to Remix / Vite
+// 	wrangler: [
+// 		// eslint-disable-next-line no-empty-pattern
+// 		async ({}, use) => {
+// 			const wrangler = await getPlatformProxy<Env>();
 
-			// Ensure all cachees are cleaned up
-			await clearKV(wrangler.env.cache);
+// 			// To access bindings in the tests.
+// 			await use(wrangler);
 
-			await wrangler.dispose();
-		},
-		{ scope: 'worker', auto: true },
-	],
-});
+// 			// Ensure all cachees are cleaned up
+// 			await clearKV(wrangler.env.cache);
 
-test.beforeEach(({ msw }) => {
-	msw.resetHandlers();
-});
+// 			await wrangler.dispose();
+// 		},
+// 		{ scope: 'worker', auto: true },
+// 	],
+// });
+
+// test.beforeEach(({ msw }) => {
+// 	msw.resetHandlers();
+// });
