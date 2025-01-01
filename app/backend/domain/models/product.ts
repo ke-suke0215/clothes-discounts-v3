@@ -8,3 +8,5 @@ export type Product = {
 	officialUrl: string;
 	imageUrl: string;
 };
+
+export type ProductWithoutId = Omit<Product, 'id'>;

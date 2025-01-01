@@ -14,7 +14,6 @@ export const loader = async ({ params, context }: LoaderFunctionArgs) => {
 	invariant(params.id, 'Missing id param');
 	const productId = parseInt(params.id);
 
-	console.log('id:', productId);
 	try {
 		const product = await new GetProductByIdService(await context.db).execute(
 			productId,

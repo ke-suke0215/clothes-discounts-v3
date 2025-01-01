@@ -4,3 +4,5 @@ export type DiscountHistory = {
 	price: number;
 	date: Date;
 };
+
+export type DiscountHistoryWithoutId = Omit<DiscountHistory, 'id'>;

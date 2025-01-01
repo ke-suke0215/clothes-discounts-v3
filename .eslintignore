@@ -30,3 +30,4 @@ dev.sqlite3
 # other
 /app/styles/tailwind.css
 /app/components/ui
+/auto-insert

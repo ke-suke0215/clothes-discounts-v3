@@ -2,7 +2,10 @@ import {
 	PrismaClient,
 	type DiscountHistory as PrismaDiscountHistory,
 } from '@prisma/client';
-import { DiscountHistory } from '../domain/models/discount-history';
+import {
+	DiscountHistory,
+	DiscountHistoryWithoutId,
+} from '../domain/models/discount-history';
 
 export class DiscountHistoryRepository {
 	private _db: PrismaClient;
@@ -36,6 +39,23 @@ export class DiscountHistoryRepository {
 		});
 
 		return discountHistories.map(dh => dh.productId);
+	}
+
+	// 一括登録
+	// 登録した要素を返す
+	async createByList(
+		discountHistories: DiscountHistoryWithoutId[],
+	): Promise<DiscountHistory[]> {
+		const prismaDiscountHistories: PrismaDiscountHistory[] =
+			await this._db.discountHistory.createManyAndReturn({
+				data: discountHistories.map(dh => ({
+					productId: dh.productId,
+					date: this.dateToNumber(dh.date),
+					price: dh.price,
+				})),
+			});
+
+		return prismaDiscountHistories.map(this.build.bind(this));
 	}
 
 	// Date型をyyyyMMddの数値に変換する
