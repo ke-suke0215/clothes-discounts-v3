@@ -6,6 +6,8 @@ import { isForMen, isForWomen } from '~/backend/domain/models/gender';
 
 // 当日の割引商品を表示する
 export function ProductList({ products }: { products: Product[] }) {
+	products.sort((a, b) => a.name.localeCompare(b.name));
+
 	const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
 	const [category, setCategory] = useState<string>('0');
 
