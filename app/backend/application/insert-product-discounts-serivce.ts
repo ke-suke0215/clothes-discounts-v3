@@ -22,6 +22,16 @@ export default class InsertProductDiscountService {
 
 	// 商品と割引履歴を登録する
 	async execute(form: InsertProductDiscountsForm): Promise<void> {
+		// 渡された割引の日付がすべて同じであることをチェックする
+		const dates: string[] = form.productDiscounts.map(product => product.date);
+		if (dates.length === 0) {
+			return;
+		}
+		const firstDate = dates[0];
+		if (!dates.every(date => date === firstDate)) {
+			throw new Error('All dates must be the same');
+		}
+
 		const productRepository = new ProductRepository(this._db); // TODO: DI使いたい
 
 		const deliveredProductDiscounts: ProductDiscount[] = form.productDiscounts;
@@ -79,23 +89,39 @@ export default class InsertProductDiscountService {
 
 		const productsWithId: Product[] = existingProducts.concat(createdProducts);
 
-		const discountHistoriesWithoutId: DiscountHistoryWithoutId[] =
-			deliveredProductDiscounts.map(productDiscount => {
-				const productId = productsWithId.find(
-					product => product.productCode === productDiscount.productCode,
-				)?.id;
-				if (!productId) {
-					throw new Error(`Product not found: ${productDiscount.productCode}`);
-				}
-
-				return {
-					productId,
-					price: productDiscount.price,
-					date: new Date(productDiscount.date),
-				};
-			});
-
+		// 割引の登録
 		const discountHistoryRepository = new DiscountHistoryRepository(this._db);
+		const targetDate: Date = new Date(deliveredProductDiscounts[0].date);
+
+		const existingDiscountProductIds: number[] =
+			await discountHistoryRepository.findProductIdsByDate(targetDate);
+
+		const discountHistoriesWithoutId: DiscountHistoryWithoutId[] =
+			deliveredProductDiscounts
+				.map(productDiscount => {
+					const productId = productsWithId.find(
+						product => product.productCode === productDiscount.productCode,
+					)?.id;
+					if (!productId) {
+						throw new Error(
+							`Product not found: ${productDiscount.productCode}`,
+						);
+					}
+
+					return {
+						productId,
+						price: productDiscount.price,
+						date: new Date(productDiscount.date),
+					};
+				})
+				// insertする割引を重複していないもののみに絞る
+				// unisex商品の場合に重複してしまうため
+				.filter(productDiscount => {
+					return !existingDiscountProductIds.includes(
+						productDiscount.productId,
+					);
+				});
+
 		await discountHistoryRepository.createByList(discountHistoriesWithoutId);
 
 		return;

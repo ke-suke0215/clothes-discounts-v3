@@ -27,7 +27,9 @@ worker-configuration.d.ts
 # DB file
 dev.sqlite3
 
+# python
+/auto-insert
+
 # other
 /app/styles/tailwind.css
 /app/components/ui
-/auto-insert
