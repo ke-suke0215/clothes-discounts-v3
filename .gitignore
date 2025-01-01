@@ -20,3 +20,6 @@ worker-configuration.d.ts
 
 # DB file
 dev.sqlite3
+
+# python
+__pycache__/
