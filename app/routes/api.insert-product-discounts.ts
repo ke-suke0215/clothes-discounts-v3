@@ -5,7 +5,6 @@ import InsertProductDiscountService from '~/backend/application/insert-product-d
 // POST /api/insert-product-discount
 export const action = async ({ request, context }: ActionFunctionArgs) => {
 	const form: InsertProductDiscountsForm = await request.json();
-	console.log(form);
 
 	try {
 		const service = new InsertProductDiscountService(await context.db);

@@ -74,10 +74,13 @@ export class ProductRepository {
 		return products.map(this.build);
 	}
 
-	async createByList(products: ProductWithoutId[]): Promise<void> {
-		await this._db.product.createMany({
-			data: products,
-		});
+	async createByList(products: ProductWithoutId[]): Promise<Product[]> {
+		const prismaProducts: PrismaProduct[] =
+			await this._db.product.createManyAndReturn({
+				data: products,
+			});
+
+		return prismaProducts.map(this.build);
 	}
 
 	async updateByList(products: Product[]): Promise<void> {

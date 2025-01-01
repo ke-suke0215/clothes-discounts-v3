@@ -17,6 +17,7 @@ export type ProductDiscount = {
 
 type GenderFormEnum = Exclude<GenderEnum, GenderEnum.Unisex>;
 
+// 製品の性別をUnisexに変更するかどうか
 export const shouldUpdateUnisex = (
 	oldVal: GenderEnum,
 	newVal: GenderFormEnum,
