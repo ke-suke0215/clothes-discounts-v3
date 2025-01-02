@@ -6,7 +6,7 @@ on:
   - push  # 一旦pushで実行
 
 jobs:
-  insert-men-product:
+  insert-men-discount:
     runs-on: ubuntu-latest
 
     container:
@@ -16,6 +16,30 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Insert data to Supabase
+      - name: exec scraping
         run: python auto-insert/men_scraping.py
+
+  insert-women-discount:
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/ke-suke0215/discount-scraper:1.0.2
+      env:
+        REMIX_APP_URL: ${{ secrets.REMIX_APP_URL }}
+
+    needs: [insert-men-discount]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: exec scraping
+        run: python auto-insert/women_scraping.py
+
+  # 各ジョブの実行時間をタイムライン形式で表示する
+  draw_timeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # 表示したいジョブの後に実行する必要がある
+    needs: [insert-men-discount, insert-women-discount]
+
+    steps:
+      - uses: Kesin11/actions-timeline@v1
