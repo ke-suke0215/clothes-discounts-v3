@@ -75,8 +75,11 @@ def scrape_and_insert(gender: str, gender_id: int):
             form = {"productDiscounts": product_discounts}
 
             try:
-                # TODO: リクエストヘッダーにAPIキーを追加
-                response = requests.post(API_URL, json=form)
+                # APIキーをヘッダーに追加
+                headers = {
+                    "Authorization": f"Insert-Discount-API-Key {os.getenv('INSERT_DISCOUNT_API_KEY')}"
+                }
+                response = requests.post(API_URL, json=form, headers=headers)
                 response.raise_for_status()
                 print(f"Data successfully sent to API: {response.json()}")
             except requests.exceptions.RequestException as e:

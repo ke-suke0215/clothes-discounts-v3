@@ -13,6 +13,8 @@ jobs:
       image: ghcr.io/ke-suke0215/discount-scraper:1.0.2
       env:
         REMIX_APP_URL: ${{ secrets.REMIX_APP_URL }}
+        # INSERT_DISCOUNT_API_KEY: ${{ secrets.INSERT_DISCOUNT_API_KEY }}
+        INSERT_DISCOUNT_API_KEY: "invalid key" # 失敗のテスト用
 
     steps:
       - uses: actions/checkout@v2
@@ -26,8 +28,10 @@ jobs:
       image: ghcr.io/ke-suke0215/discount-scraper:1.0.2
       env:
         REMIX_APP_URL: ${{ secrets.REMIX_APP_URL }}
+        INSERT_DISCOUNT_API_KEY: ${{ secrets.INSERT_DISCOUNT_API_KEY }}
 
     needs: [insert-men-discount]
+    if: always()  # menのinsertジョブが失敗しても実行する
 
     steps:
       - uses: actions/checkout@v2
@@ -40,6 +44,7 @@ jobs:
     timeout-minutes: 5
     # 表示したいジョブの後に実行する必要がある
     needs: [insert-men-discount, insert-women-discount]
+    if: always()
 
     steps:
       - uses: Kesin11/actions-timeline@v1
