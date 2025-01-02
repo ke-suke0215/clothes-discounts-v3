@@ -13,8 +13,7 @@ jobs:
       image: ghcr.io/ke-suke0215/discount-scraper:1.0.2
       env:
         REMIX_APP_URL: ${{ secrets.REMIX_APP_URL }}
-        # INSERT_DISCOUNT_API_KEY: ${{ secrets.INSERT_DISCOUNT_API_KEY }}
-        INSERT_DISCOUNT_API_KEY: "invalid key" # 失敗のテスト用
+        INSERT_DISCOUNT_API_KEY: ${{ secrets.INSERT_DISCOUNT_API_KEY }}
 
     steps:
       - uses: actions/checkout@v2

@@ -59,7 +59,7 @@ def scrape_and_insert(gender: str, gender_id: int):
         # データの整形とAPIリクエスト
         if len(names) == len(prices) == len(product_codes):
             product_discounts = []
-            
+
             for name, price, product_code, page_url, image_url in zip(names, prices, product_codes, page_urls, image_urls):
                 product_discounts.append({
                     "productCode": product_code,
@@ -77,7 +77,7 @@ def scrape_and_insert(gender: str, gender_id: int):
             try:
                 # APIキーをヘッダーに追加
                 headers = {
-                    "Authorization": f"Insert-Discount-API-Key {os.getenv('INSERT_DISCOUNT_API_KEY')}"
+                    "Insert-Discount-API-Key": os.getenv("INSERT_DISCOUNT_API_KEY")
                 }
                 response = requests.post(API_URL, json=form, headers=headers)
                 response.raise_for_status()

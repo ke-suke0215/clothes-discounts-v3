@@ -33,6 +33,4 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
 			throw new Response('Internal Server Error', { status: 500 });
 		}
 	}
-
-	// サービス呼び出しなどの処理
 };

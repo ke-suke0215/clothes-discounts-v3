@@ -28,3 +28,7 @@ GITHUB_REPO = "remix-cloudflare-template"
 binding = "DATABASE"
 database_name = "clothes-discounts"
 database_id = "163dec0c-e3ec-4f4a-a974-79b807d7cab4"
+
+[observability]
+enabled = true
+head_sampling_rate = 1
