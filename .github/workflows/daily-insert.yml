@@ -1,8 +1,9 @@
 name: Daily Insert
 
 on:
-  schedule:
-    - cron: "0 22 * * *"
+  # schedule:
+  #   - cron: "0 22 * * *"
+  - push  # 一旦pushで実行
 
 jobs:
   insert-men-product:
