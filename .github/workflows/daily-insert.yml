@@ -1,0 +1,20 @@
+name: Daily Insert
+
+on:
+  schedule:
+    - cron: "0 22 * * *"
+
+jobs:
+  insert-men-product:
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/ke-suke0215/discount-scraper:1.0.2
+      env:
+        REMIX_APP_URL: ${{ secrets.REMIX_APP_URL }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Insert data to Supabase
+        run: python auto-insert/men_scraping.py
