@@ -34,9 +34,3 @@ WORKDIR /app
 # 必要なPythonパッケージをインストール
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
-# スクリプトをコピー
-COPY . .
-
-# # 実行コマンド
-# CMD ["python", "men_scraping.py"]

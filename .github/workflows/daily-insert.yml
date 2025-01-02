@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/ke-suke0215/discount-scraper:1.0.2
+      image: ghcr.io/ke-suke0215/discount-scraper:1.0.3
       env:
         REMIX_APP_URL: ${{ secrets.REMIX_APP_URL }}
         INSERT_DISCOUNT_API_KEY: ${{ secrets.INSERT_DISCOUNT_API_KEY }}
@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/ke-suke0215/discount-scraper:1.0.2
+      image: ghcr.io/ke-suke0215/discount-scraper:1.0.3
       env:
         REMIX_APP_URL: ${{ secrets.REMIX_APP_URL }}
         INSERT_DISCOUNT_API_KEY: ${{ secrets.INSERT_DISCOUNT_API_KEY }}
