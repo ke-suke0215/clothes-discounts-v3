@@ -13,7 +13,8 @@ export const loader: LoaderFunction = async ({
 	context,
 }: LoaderFunctionArgs) => {
 	try {
-		const service = new GetProductsByDiscountDateService(await context.db);
+		const resolvedContext = await context;
+		const service = new GetProductsByDiscountDateService(resolvedContext.db);
 		const products: Product[] = await service.execute(new Date());
 
 		return json({ products });

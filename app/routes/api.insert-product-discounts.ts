@@ -7,7 +7,8 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
 	const form: InsertProductDiscountsForm = await request.json();
 
 	try {
-		const service = new InsertProductDiscountService(await context.db);
+		const resolvedContext = await context;
+		const service = new InsertProductDiscountService(resolvedContext.db);
 		await service.execute(form);
 
 		return json({ form });

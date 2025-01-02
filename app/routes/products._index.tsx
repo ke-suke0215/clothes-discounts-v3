@@ -22,7 +22,8 @@ export const loader: LoaderFunction = async ({
 			return json({ products: [] });
 		}
 
-		const service = new GetProductsByNameService(await context.db);
+		const resolvedContext = await context;
+		const service = new GetProductsByNameService(resolvedContext.db);
 		const products: Product[] = await service.execute(searchWord);
 
 		return json({ products });

@@ -15,7 +15,8 @@ export const loader = async ({ params, context }: LoaderFunctionArgs) => {
 	const productId = parseInt(params.id);
 
 	try {
-		const product = await new GetProductByIdService(await context.db).execute(
+		const resolvedContext = await context;
+		const product = await new GetProductByIdService(resolvedContext.db).execute(
 			productId,
 		);
 		return json({ product });
