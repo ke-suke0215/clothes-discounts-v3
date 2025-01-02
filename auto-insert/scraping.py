@@ -10,6 +10,7 @@ import re
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import json
+import sys
 
 def scrape_and_insert(gender: str, gender_id: int):
     print('Start scraping...')
@@ -84,11 +85,13 @@ def scrape_and_insert(gender: str, gender_id: int):
                 print(f"Data successfully sent to API: {response.json()}")
             except requests.exceptions.RequestException as e:
                 print(f"Failed to send data to API: {e}")
+                sys.exit(1)
         else:
             print('Failed to get elements')
             print(f'Names count: {len(names)}')
             print(f'Prices count: {len(prices)}')
             print(f'product_codes count: {len(product_codes)}')
+            sys.exit(1)
 
     finally:
         driver.quit()
