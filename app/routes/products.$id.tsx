@@ -40,6 +40,10 @@ export default function ProductDetail() {
 		history => new Date(history.date),
 	);
 
+	const orderedDiscountHistories = product.discountHistories.sort((a, b) => {
+		return new Date(b.date).getTime() - new Date(a.date).getTime();
+	});
+
 	return (
 		<div className="container mx-auto max-w-5xl p-6">
 			<PageBreadcrumb
@@ -82,7 +86,7 @@ export default function ProductDetail() {
 									</tr>
 								</thead>
 								<tbody className="divide-y">
-									{product.discountHistories.map(history => (
+									{orderedDiscountHistories.map(history => (
 										<tr key={history.date}>
 											<td className="py-3">
 												{format(new Date(history.date), 'yyyy年MM月dd日', {
