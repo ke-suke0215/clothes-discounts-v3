@@ -1,9 +1,8 @@
 name: Daily Insert
 
 on:
-  # schedule:
-  #   - cron: "0 22 * * *"
-  - push  # 一旦pushで実行
+  schedule:
+    - cron: "0 22 * * *"
 
 jobs:
   insert-men-discount:
@@ -41,7 +40,6 @@ jobs:
   draw_timeline:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    # 表示したいジョブの後に実行する必要がある
     needs: [insert-men-discount, insert-women-discount]
     if: always()
 

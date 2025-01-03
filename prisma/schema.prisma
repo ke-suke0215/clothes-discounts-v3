@@ -25,6 +25,7 @@ model Product {
   discountHistory DiscountHistory[]                              // 割引履歴
 
   @@map("products")
+  @@index([name])
 }
 
 model DiscountHistory {
