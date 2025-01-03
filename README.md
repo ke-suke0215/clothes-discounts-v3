@@ -1,3 +1,36 @@
+# Clothes Discount
+
+## Development
+
+開発環境
+
+```sh
+npm run dev
+```
+
+ローカルのCloudflare環境
+
+```sh
+npm run start
+```
+
+## デプロイ
+
+Cloudflare本番環境
+
+```sh
+npm run deploy
+```
+
+## その他
+
+- 開発時参考にしていた記事
+  - https://qiita.com/miriwo/items/04ae58a0705cc54e198c
+
+---
+
+以下、テンプレートの元のREADME。
+
 # remix-cloudflare-template
 
 Learn more about [Remix Stacks](https://remix.run/stacks).
