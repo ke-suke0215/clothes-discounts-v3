@@ -12,7 +12,7 @@ export default class GetProductsByNameService {
 
 	// 名前で商品を曖昧検索する
 	async execute(name: string): Promise<Product[]> {
-		const keyWords = name.split(/[ ,]+/);
+		const keyWords = name.split(/[ ,　、]+/);
 
 		// Repository呼び出し
 		return await new ProductRepository(this._db).findByName(keyWords);
