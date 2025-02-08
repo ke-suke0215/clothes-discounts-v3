@@ -60,10 +60,10 @@ export default class InsertProductDiscountService {
 
 		// 商品登録処理完了
 
-		// 商品の性別更新
+		// 商品の性別を更新するプロダクトのIDを取得
 		// すでに存在する商品のうち、性別が異なる値であればUnisexに変更する
-		const productsToUpdate: Product[] = existingProducts.filter(
-			existingProduct => {
+		const productsToUpdateGenderIds: number[] = existingProducts
+			.filter(existingProduct => {
 				const duplicateProduct: ProductDiscount | undefined =
 					deliveredProductDiscounts.find(
 						product => existingProduct.productCode === product.productCode,
@@ -77,15 +77,51 @@ export default class InsertProductDiscountService {
 					existingProduct.gender,
 					duplicateProduct.gender,
 				);
-			},
+			})
+			.map(product => product.id);
+
+		// 商品の画像を更新するプロダクトのIDを取得
+		const productsToUpdateImageIds: number[] = existingProducts
+			.filter(existingProduct => {
+				const duplicateProduct: ProductDiscount | undefined =
+					deliveredProductDiscounts.find(
+						product => existingProduct.productCode === product.productCode,
+					);
+
+				if (!duplicateProduct) {
+					return false;
+				}
+
+				return existingProduct.imageUrl !== duplicateProduct.imageUrl;
+			})
+			.map(product => product.id);
+
+		const productsToUpdateIds = productsToUpdateGenderIds.concat(
+			productsToUpdateImageIds,
 		);
-		const fixedGenderProducts: Product[] = productsToUpdate.map(product => {
+
+		const fixedProducts: Product[] = productsToUpdateIds.map(id => {
+			const product = existingProducts.find(product => product.id === id);
+			if (!product) throw new Error(`Product not found: ${id}`);
+
+			const gender = productsToUpdateGenderIds.includes(id)
+				? GenderEnum.Unisex
+				: product.gender;
+			// 画像更新は対象かどうかは関係なく、全体の更新対象であれば新規を使うようにする
+			const imageUrl =
+				deliveredProductDiscounts.find(
+					deliveredProduct =>
+						product.productCode === deliveredProduct.productCode,
+				)?.imageUrl ?? product.imageUrl;
+
 			return {
 				...product,
-				gender: GenderEnum.Unisex,
+				gender: gender,
+				imageUrl: imageUrl,
 			};
 		});
-		productRepository.updateByList(fixedGenderProducts);
+
+		productRepository.updateByList(fixedProducts);
 
 		const productsWithId: Product[] = existingProducts.concat(createdProducts);
 
