@@ -1,5 +1,5 @@
 import { GenderEnum } from '~/backend/domain/models/gender';
-import { ProductWithoutId } from '~/backend/domain/models/product';
+import { Product, ProductWithoutId } from '~/backend/domain/models/product';
 
 export type InsertProductDiscountsForm = {
 	productDiscounts: ProductDiscount[];
@@ -25,19 +25,15 @@ export const shouldUpdateUnisex = (
 	switch (oldVal) {
 		case GenderEnum.Women:
 			return newVal === GenderEnum.Men;
-			break;
 
 		case GenderEnum.Men:
 			return newVal === GenderEnum.Women;
-			break;
 
 		case GenderEnum.Unisex:
 			return false;
-			break;
 
 		default:
 			throw new Error(`Unexpected gender: ${oldVal}`);
-			break;
 	}
 };
 
