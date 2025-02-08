@@ -12,6 +12,7 @@ export default class GetProductsByNameService {
 
 	// 名前で商品を曖昧検索する
 	async execute(name: string): Promise<Product[]> {
+		// eslint-disable-next-line no-irregular-whitespace
 		const keyWords = name.split(/[ ,　、]+/);
 
 		// Repository呼び出し
