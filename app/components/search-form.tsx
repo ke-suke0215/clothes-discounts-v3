@@ -3,7 +3,7 @@ import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
 import { Search } from 'lucide-react';
 
-export function SearchForm() {
+export function SearchForm({ defaultValue = '' }: { defaultValue?: string }) {
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		const formData = new FormData(event.currentTarget);
 		const searchWord = formData.get('search')?.toString().trim();
@@ -26,6 +26,7 @@ export function SearchForm() {
 					name="search"
 					placeholder="商品名を入力"
 					className="focus:outline-none"
+					defaultValue={defaultValue}
 				/>
 				<Button type="submit">
 					<Search />

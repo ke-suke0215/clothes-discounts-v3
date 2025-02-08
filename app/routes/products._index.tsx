@@ -26,7 +26,8 @@ export const loader: LoaderFunction = async ({
 		const service = new GetProductsByNameService(resolvedContext.db);
 		const products: Product[] = await service.execute(searchWord);
 
-		return json({ products });
+		// searchWordも返す
+		return json({ products, searchWord });
 	} catch (error) {
 		console.error('Failed to load products:', error);
 		throw new Response('Internal Server Error', { status: 500 });
@@ -35,16 +36,16 @@ export const loader: LoaderFunction = async ({
 
 // 当日の割引商品を表示する
 export default function Index() {
-	const { products } = useLoaderData<typeof loader>() as {
-		// TODO: idの降順のほうが新しい商品が上に来るのでいいかも
+	const { products, searchWord } = useLoaderData<typeof loader>() as {
 		products: Product[];
+		searchWord: string;
 	};
 
 	return (
 		<div className="container mx-auto max-w-5xl p-6">
 			<PageBreadcrumb currentPage="商品検索" items={[]} />
 			<h1 className="mb-6 text-2xl">商品一覧</h1>
-			<SearchForm />
+			<SearchForm defaultValue={searchWord} />
 			{products.length > 0 ? (
 				<ProductList products={products} />
 			) : (
