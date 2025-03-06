@@ -15,10 +15,10 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
 		const expectedApiKey =
 			resolvedContext.cloudflare.env.INSERT_DISCOUNT_API_KEY;
 
-		// if (actualApiKey !== expectedApiKey) {
-		// 	console.error('Unauthorized. Invalid API Key: ', actualApiKey);
-		// 	return new Response('Unauthorized', { status: 401 });
-		// }
+		if (actualApiKey !== expectedApiKey) {
+			console.error('Unauthorized. Invalid API Key: ', actualApiKey);
+			return new Response('Unauthorized', { status: 401 });
+		}
 
 		const service = new InsertProductDiscountService(resolvedContext.db);
 		await service.execute(form);

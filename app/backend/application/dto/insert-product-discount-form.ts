@@ -1,5 +1,5 @@
 import { GenderEnum } from '~/backend/domain/models/gender';
-import { Product, ProductWithoutId } from '~/backend/domain/models/product';
+import { ProductWithoutId } from '~/backend/domain/models/product';
 
 export type InsertProductDiscountsForm = {
 	productDiscounts: ProductDiscount[];
