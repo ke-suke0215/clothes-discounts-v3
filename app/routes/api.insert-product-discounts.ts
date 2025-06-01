@@ -16,7 +16,6 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
 			resolvedContext.cloudflare.env.INSERT_DISCOUNT_API_KEY;
 
 		if (actualApiKey !== expectedApiKey) {
-			console.error('expectedApiKey: ', expectedApiKey);
 			console.error('Unauthorized. Invalid API Key: ', actualApiKey);
 			return new Response('Unauthorized', { status: 401 });
 		}
