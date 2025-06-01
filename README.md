@@ -22,6 +22,37 @@ Cloudflare本番環境
 npm run deploy
 ```
 
+## 動作確認
+
+ローカル起動時の sqlite ファイル
+
+```sh
+open .wrangler/state/v3/d1/miniflare-D1DatabaseObject
+```
+
+insert 処理確認用 curl コマンド
+
+※ API key は適当に設定する必要あり
+
+```sh
+curl -X POST http://localhost:5173/api/insert-product-discounts \
+-H "Content-Type: application/json" \
+-H "Insert-Discount-API-Key: xxxxxxxxx" \
+-d '{
+  "productDiscounts": [
+    {
+      "productCode": "418910",
+      "name": "ストレッチセルビッジスリムフィットジーンズ",
+      "gender": 1,
+      "officialUrl": "https://www.uniqlo.com/jp/ja/products/E418910-000/00",
+      "imageUrl": "https://image.uniqlo.com/UQ/ST3/AsianCommon/imagesgoods/418910/item/goods_69_418910.jpg?width=300",
+      "price": 1200,
+      "date": "2025-05-28"
+    }
+  ]
+}'
+```
+
 ## その他
 
 - 開発時参考にしていた記事
