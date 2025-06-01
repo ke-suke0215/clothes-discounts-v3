@@ -80,8 +80,8 @@ export default class InsertProductDiscountService {
 			})
 			.map(product => product.id);
 
-		// 商品の画像を更新するプロダクトのIDを取得
-		const productsToUpdateImageIds: number[] = existingProducts
+		// 商品の画像と名前を更新するプロダクトのIDを取得
+		const productsToUpdateOtherIds: number[] = existingProducts
 			.filter(existingProduct => {
 				const duplicateProduct: ProductDiscount | undefined =
 					deliveredProductDiscounts.find(
@@ -92,32 +92,40 @@ export default class InsertProductDiscountService {
 					return false;
 				}
 
-				return existingProduct.imageUrl !== duplicateProduct.imageUrl;
+				return (
+					existingProduct.imageUrl !== duplicateProduct.imageUrl ||
+					existingProduct.name !== duplicateProduct.name ||
+					existingProduct.officialUrl !== duplicateProduct.officialUrl
+				);
 			})
 			.map(product => product.id);
 
 		const productsToUpdateIds = productsToUpdateGenderIds.concat(
-			productsToUpdateImageIds,
+			productsToUpdateOtherIds,
 		);
 
 		const fixedProducts: Product[] = productsToUpdateIds.map(id => {
 			const product = existingProducts.find(product => product.id === id);
 			if (!product) throw new Error(`Product not found: ${id}`);
 
+			const duplicateProduct = deliveredProductDiscounts.find(
+				deliveredProduct =>
+					product.productCode === deliveredProduct.productCode,
+			);
+
 			const gender = productsToUpdateGenderIds.includes(id)
 				? GenderEnum.Unisex
 				: product.gender;
-			// 画像更新は対象かどうかは関係なく、全体の更新対象であれば新規を使うようにする
-			const imageUrl =
-				deliveredProductDiscounts.find(
-					deliveredProduct =>
-						product.productCode === deliveredProduct.productCode,
-				)?.imageUrl ?? product.imageUrl;
+			const imageUrl = duplicateProduct?.imageUrl ?? product.imageUrl;
+			const name = duplicateProduct?.name ?? product.name;
+			const officialUrl = duplicateProduct?.officialUrl ?? product.officialUrl;
 
 			return {
 				...product,
 				gender: gender,
 				imageUrl: imageUrl,
+				name: name,
+				officialUrl: officialUrl,
 			};
 		});
 
