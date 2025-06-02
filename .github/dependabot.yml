@@ -1,7 +1,7 @@
 version: 2
 updates:
-  - package-ecosystem: bundler
-    directory: "/api"
+  - package-ecosystem: npm
+    directory: "/"
     schedule:
       interval: monthly
     open-pull-requests-limit: 10
