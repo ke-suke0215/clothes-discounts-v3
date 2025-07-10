@@ -1,80 +1,123 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with
-code in this repository.
+このファイルは、このリポジトリでのコード作業時にClaude Code
+(claude.ai/code) にガイダンスを提供します。
 
-## Commands
+## コマンド
 
-### Development
+### 開発
 
-- `npm run dev` - Start Vite dev server for local development
-- `npm run start` - Start Wrangler dev server (Cloudflare Workers runtime)
-- `npm run build && npm run start` - Test on workerd runtime locally
+- `npm run dev` - 開発用のVite devサーバーを起動
+- `npm run start` - Wrangler devサーバーを起動（Cloudflare Workers実行時）
+- `npm run build && npm run start` - workerd実行時でローカルテスト
 
-### Testing & Quality
+### テスト・品質管理
 
-- `npm run test` - Run Playwright tests with UI mode
-- `npm run lint` - Run ESLint
-- `npm run typecheck` - Run TypeScript type checking and generate Wrangler types
-- `npm run format` - Format code with Prettier
+- `npm run test` - Playwright テストをUIモードで実行
+- `npm run lint` - ESLint を実行
+- `npm run typecheck` - TypeScript型チェックとWranglerタイプ生成を実行
+- `npm run format` - Prettier でコードフォーマット
 
-### Deployment
+### デプロイ
 
-- `npm run deploy` - Deploy to Cloudflare Workers production
+- `npm run deploy` - Cloudflare Workers本番環境にデプロイ
 
-### Database & Types
+### データベース・タイプ
 
-- `npm run typegen` - Generate environment types from wrangler.toml and
-  .dev.vars
+- `npm run typegen` - wrangler.toml と .dev.vars から環境タイプを生成
 
-## Architecture
+## アーキテクチャ
 
-This is a Remix application deployed on Cloudflare Workers with the following
-key architectural patterns:
+このプロジェクトは、以下の主要なアーキテクチャパターンを持つCloudflare
+Workers上で動作するRemixアプリケーションです：
 
-### Backend Layer (Clean Architecture)
+### バックエンドレイヤー（クリーンアーキテクチャ）
 
-The backend follows a layered architecture pattern:
+バックエンドは階層化されたアーキテクチャパターンに従います：
 
-- **Domain Models** (`app/backend/domain/models/`): Core business entities
-  (Product, DiscountHistory, Gender)
-- **Application Services** (`app/backend/application/`): Business logic
-  orchestration layer
-- **Infrastructure** (`app/backend/infrastructure/`): Data access repositories
-  using Prisma
-- **Error Handling** (`app/backend/errors/`): Custom error types for the
-  application
+- **ドメインモデル**
+  (`app/backend/domain/models/`)：コアビジネスエンティティ（Product、DiscountHistory、Gender）
+- **アプリケーションサービス**
+  (`app/backend/application/`)：ビジネスロジック オーケストレーション層
+- **インフラストラクチャ**
+  (`app/backend/infrastructure/`)：Prismaを使用したデータアクセス リポジトリ
+- **エラーハンドリング**
+  (`app/backend/errors/`)：アプリケーション用のカスタムエラータイプ
 
-### Database
+### データベース
 
-- Uses **Cloudflare D1** (SQLite) as the database
-- **Prisma ORM** with D1 adapter for database operations
-- Database connection is configured through `load-context.ts` which creates
-  PrismaClient with D1 adapter
-- Migration files are in `/migrations/` directory
+- **Cloudflare D1** (SQLite) をデータベースとして使用
+- **Prisma ORM** と D1 アダプターによるデータベース操作
+- データベース接続は `load-context.ts`
+  で設定され、D1 アダプターを持つ PrismaClient を作成
+- マイグレーションファイルは `/migrations/` ディレクトリに配置
 
-### Data Flow
+### データフロー
 
-1. Remix routes handle HTTP requests
-2. Routes call Application Services for business logic
-3. Services use Infrastructure Repositories for data access
-4. Repositories use Prisma with D1 adapter to query the database
+1. Remix ルートが HTTP リクエストを処理
+2. ルートがビジネスロジックのためにアプリケーションサービスを呼び出し
+3. サービスがデータアクセスのためにインフラストラクチャ リポジトリを使用
+4. リポジトリがデータベースクエリのために D1 アダプターを持つ Prisma を使用
 
-### Frontend
+### フロントエンド
 
-- **Remix** with React for SSR/client-side rendering
-- **Tailwind CSS** for styling with custom UI components in `app/components/ui/`
-- **Radix UI** components for accessible UI primitives
+- **Remix** と React による SSR/クライアントサイドレンダリング
+- **Tailwind CSS** による スタイリング、カスタムUIコンポーネントは
+  `app/components/ui/` に配置
+- **Radix UI** コンポーネントによるアクセシブルなUIプリミティブ
 
-### Key Integration Points
+### 主要な統合ポイント
 
-- `load-context.ts` - Configures database connection for each request context
-- `app/database/client.ts` - Database connection factory using Prisma D1 adapter
-- Application Services receive PrismaClient through dependency injection pattern
+- `load-context.ts` - 各リクエストコンテキストでデータベース接続を設定
+- `app/database/client.ts` - Prisma
+  D1 アダプターを使用したデータベース接続ファクトリー
+- アプリケーションサービスは依存性注入パターンを通じてPrismaClientを受け取る
 
-### Environment Configuration
+### 環境設定
 
-- Local secrets in `.dev.vars` file
-- Environment variables in `wrangler.toml` vars section
-- D1 database binding configured in wrangler.toml
-- Type generation available via `npm run typegen`
+- ローカル秘密情報は `.dev.vars` ファイルに設定
+- 環境変数は `wrangler.toml` の vars セクションに設定
+- D1 データベースバインディングは wrangler.toml で設定
+- タイプ生成は `npm run typegen` で利用可能
+
+## 開発時の注意点
+
+### データベース操作確認
+
+ローカル開発時のsqliteファイルは以下で確認可能：
+
+```sh
+open .wrangler/state/v3/d1/miniflare-D1DatabaseObject
+```
+
+### API動作確認
+
+商品割引情報の挿入API確認用のcurlコマンド例：
+
+```sh
+curl -X POST http://localhost:5173/api/insert-product-discounts \
+-H "Content-Type: application/json" \
+-H "Insert-Discount-API-Key: xxxxxxxxx" \
+-d '{
+  "productDiscounts": [
+    {
+      "productCode": "418910",
+      "name": "ストレッチセルビッジスリムフィットジーンズ",
+      "gender": 1,
+      "officialUrl": "https://www.uniqlo.com/jp/ja/products/E418910-000/00",
+      "imageUrl": "https://image.uniqlo.com/UQ/ST3/AsianCommon/imagesgoods/418910/item/goods_69_418910.jpg?width=300",
+      "price": 1200,
+      "date": "2025-05-28"
+    }
+  ]
+}'
+```
+
+### スクレイピング機能
+
+`auto-insert/`
+ディレクトリには商品データを自動収集するPythonスクリプトが含まれています：
+
+- `men_scraping.py` - メンズ商品データ収集
+- `women_scraping.py` - ウィメンズ商品データ収集
+- `scraping.py` - 基本スクレイピング機能
