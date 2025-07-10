@@ -50,47 +50,93 @@ def scrape_and_insert(gender: str, gender_id: int):
         html = driver.page_source
         soup = BeautifulSoup(html, 'html.parser')
 
-        # 必要なデータを抽出
-        names = [element.text for element in soup.find_all('h3', class_='fr-ec-title')]
-        prices = [int(element.text.replace('¥', '').replace(',', '')) for element in soup.find_all('p', class_='fr-ec-price-text')]
-        product_codes = [element.get('id') for element in soup.find_all('a', class_='fr-ec-product-tile')]
-        page_urls = [UNIQLO_DOMAIN + element.get('href') for element in soup.find_all('a', class_='fr-ec-product-tile')]
-        image_urls = [element.get('src') for element in soup.find_all('img', class_='fr-ec-image__img')]
+        # 必要なデータを抽出（2025年7月時点の構造に対応）
+        names = [element.text.strip() for element in soup.find_all('h3')]
+        
+        # 価格を取得（¥マークを含むテキストを検索）
+        price_elements = soup.find_all(string=re.compile(r'¥\d+'))
+        prices = []
+        for price_text in price_elements:
+            price_match = re.search(r'¥([\d,]+)', price_text)
+            if price_match:
+                prices.append(int(price_match.group(1).replace(',', '')))
+        
+        # 商品リンクを取得
+        product_links = soup.find_all('a', href=re.compile(r'/jp/ja/products/'))
+        product_codes = []
+        page_urls = []
+        
+        for link in product_links:
+            href = link.get('href')
+            if href:
+                # 商品コードをURLから抽出 (例: /jp/ja/products/E474415-000/00 → E474415-000)
+                code_match = re.search(r'/products/([^/]+)/', href)
+                if code_match:
+                    product_codes.append(code_match.group(1))
+                    page_urls.append(UNIQLO_DOMAIN + href)
+        
+        # 商品画像を取得
+        image_urls = []
+        for img in soup.find_all('img'):
+            src = img.get('src')
+            if src and 'imagesgoods' in src:
+                image_urls.append(src)
 
         # データの整形とAPIリクエスト
-        if len(names) == len(prices) == len(product_codes):
-            product_discounts = []
-
-            for name, price, product_code, page_url, image_url in zip(names, prices, product_codes, page_urls, image_urls):
-                product_discounts.append({
-                    "productCode": product_code,
-                    "name": name,
-                    "gender": gender_id,
-                    "officialUrl": page_url,
-                    "imageUrl": image_url,
-                    "price": price,
-                    "date": formatted_date
-                })
-
-            # APIリクエスト
-            form = {"productDiscounts": product_discounts}
-
-            try:
-                # APIキーをヘッダーに追加
-                headers = {
-                    "Insert-Discount-API-Key": os.getenv("INSERT_DISCOUNT_API_KEY")
-                }
-                response = requests.post(API_URL, json=form, headers=headers)
-                response.raise_for_status()
-                print(f"Data successfully sent to API: {response.json()}")
-            except requests.exceptions.RequestException as e:
-                print(f"Failed to send data to API: {e}")
-                sys.exit(1)
-        else:
-            print('Failed to get elements')
+        print(f'Found {len(names)} names, {len(prices)} prices, {len(product_codes)} product codes, {len(image_urls)} images')
+        
+        # データの数が一致しない場合の処理を改善
+        min_count = min(len(names), len(prices), len(product_codes), len(page_urls), len(image_urls))
+        
+        if min_count == 0:
+            print('No products found. Check if the website structure has changed.')
+            print('Debug info:')
+            print(f'Names: {names[:3]}')  # 最初の3つを表示
+            print(f'Prices: {prices[:3]}')
+            print(f'Product codes: {product_codes[:3]}')
+            sys.exit(1)
+        
+        if len(names) != len(prices) or len(names) != len(product_codes):
+            print(f'Warning: Data count mismatch. Using first {min_count} items.')
             print(f'Names count: {len(names)}')
             print(f'Prices count: {len(prices)}')
-            print(f'product_codes count: {len(product_codes)}')
+            print(f'Product codes count: {len(product_codes)}')
+            print(f'Page URLs count: {len(page_urls)}')
+            print(f'Image URLs count: {len(image_urls)}')
+        
+        # 最小の数まで調整
+        names = names[:min_count]
+        prices = prices[:min_count]
+        product_codes = product_codes[:min_count]
+        page_urls = page_urls[:min_count]
+        image_urls = image_urls[:min_count]
+        
+        product_discounts = []
+        for i in range(min_count):
+            product_discounts.append({
+                "productCode": product_codes[i],
+                "name": names[i],
+                "gender": gender_id,
+                "officialUrl": page_urls[i],
+                "imageUrl": image_urls[i],
+                "price": prices[i],
+                "date": formatted_date
+            })
+
+        # APIリクエスト
+        form = {"productDiscounts": product_discounts}
+
+        try:
+            # APIキーをヘッダーに追加
+            headers = {
+                "Insert-Discount-API-Key": os.getenv("INSERT_DISCOUNT_API_KEY")
+            }
+            response = requests.post(API_URL, json=form, headers=headers)
+            response.raise_for_status()
+            print(f"Data successfully sent to API: {response.json()}")
+            print(f"Successfully processed {len(product_discounts)} products")
+        except requests.exceptions.RequestException as e:
+            print(f"Failed to send data to API: {e}")
             sys.exit(1)
 
     finally:
