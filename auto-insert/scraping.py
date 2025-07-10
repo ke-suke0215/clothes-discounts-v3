@@ -123,6 +123,11 @@ def scrape_and_insert(gender: str, gender_id: int):
                 "date": formatted_date
             })
 
+        # 0件の場合は明示的に失敗させる
+        if len(product_discounts) == 0:
+            print('ERROR: No products to process. Scraping failed.')
+            sys.exit(1)
+
         # APIリクエスト
         form = {"productDiscounts": product_discounts}
 
