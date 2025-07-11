@@ -51,19 +51,35 @@ def scrape_and_insert(gender: str, gender_id: int):
         soup = BeautifulSoup(html, 'html.parser')
 
         # 必要なデータを抽出（2025年7月時点の構造に対応）
-        names = [element.text.strip() for element in soup.find_all('h3')]
+        # 商品リンク内のh3タグのみを対象として商品名を取得
+        product_links = soup.find_all('a', href=re.compile(r'/jp/ja/products/'))
+        names = []
+        for link in product_links:
+            h3_element = link.find('h3')
+            if h3_element:
+                product_name = h3_element.text.strip()
+                # 商品名のバリデーション（空文字や短すぎる名前を除外）
+                if product_name and len(product_name) >= 3 and len(product_name) <= 100:
+                    # XSS対策：HTMLタグを除去
+                    clean_name = re.sub(r'<[^>]+>', '', product_name)
+                    names.append(clean_name)
         
         # 価格を取得（シンプルなHTMLタグベースの方法）
         prices = []
         price_elements = soup.find_all('p', class_='fr-ec-price-text')
         for element in price_elements:
-            price_text = element.get_text().strip()
-            price_match = re.search(r'¥([\d,]+)', price_text)
-            if price_match:
-                prices.append(int(price_match.group(1).replace(',', '')))
+            try:
+                price_text = element.get_text().strip()
+                price_match = re.search(r'¥([\d,]+)', price_text)
+                if price_match:
+                    price_value = int(price_match.group(1).replace(',', ''))
+                    if 0 < price_value < 1000000:  # 価格の妥当性チェック
+                        prices.append(price_value)
+            except (ValueError, AttributeError) as e:
+                print(f"Failed to parse price: {price_text}, error: {e}")
+                continue
         
-        # 商品コードとページURLを取得
-        product_links = soup.find_all('a', href=re.compile(r'/jp/ja/products/'))
+        # 商品コードとページURLを取得（既に取得済みのproduct_linksを使用）
         product_codes = []
         page_urls = []
         
@@ -73,15 +89,22 @@ def scrape_and_insert(gender: str, gender_id: int):
                 # 商品コードをURLから抽出 (例: /jp/ja/products/E474415-000/00 → E474415-000)
                 code_match = re.search(r'/products/([^/]+)/', href)
                 if code_match:
-                    product_codes.append(code_match.group(1))
-                    page_urls.append(UNIQLO_DOMAIN + href)
+                    product_code = code_match.group(1)
+                    # 商品コードの形式バリデーション (E123456-000 形式)
+                    if re.match(r'^[A-Z]\d{6}-\d{3}$', product_code):
+                        product_codes.append(product_code)
+                        page_urls.append(UNIQLO_DOMAIN + href)
+                    else:
+                        print(f"Invalid product code format: {product_code}")
         
-        # 商品画像を取得
+        # 商品画像を取得（商品リンク内の画像のみを対象）
         image_urls = []
-        for img in soup.find_all('img'):
-            src = img.get('src')
-            if src and 'imagesgoods' in src:
-                image_urls.append(src)
+        for link in product_links:
+            img_element = link.find('img')
+            if img_element:
+                src = img_element.get('src')
+                if src and 'imagesgoods' in src:
+                    image_urls.append(src)
 
         # データの整形とAPIリクエスト
         print(f'Found {len(names)} names, {len(prices)} prices, {len(product_codes)} product codes, {len(image_urls)} images')
