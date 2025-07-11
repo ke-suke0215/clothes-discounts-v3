@@ -86,14 +86,10 @@ def scrape_and_insert(gender: str, gender_id: int):
         # データの整形とAPIリクエスト
         print(f'Found {len(names)} names, {len(prices)} prices, {len(product_codes)} product codes, {len(image_urls)} images')
         
-        # 取得した商品一覧を表示
+        # データの数をチェックして最小数を計算
         min_count = min(len(names), len(prices), len(product_codes), len(page_urls), len(image_urls))
-        print(f'\n=== 取得した商品一覧 ({min_count}件) ===')
-        for i in range(min_count):
-            print(f'{i+1:2d}: {names[i]:<40} - ¥{prices[i]:>5,} - {product_codes[i]}')
         
-        # データの数が一致しない場合の処理を改善
-        
+        # 0件の場合は処理を終了
         if min_count == 0:
             print('No products found. Check if the website structure has changed.')
             print('Debug info:')
@@ -102,6 +98,7 @@ def scrape_and_insert(gender: str, gender_id: int):
             print(f'Product codes: {product_codes[:3]}')
             sys.exit(1)
         
+        # データ数の不一致を警告表示
         if len(names) != len(prices) or len(names) != len(product_codes):
             print(f'Warning: Data count mismatch. Using first {min_count} items.')
             print(f'Names count: {len(names)}')
@@ -110,7 +107,12 @@ def scrape_and_insert(gender: str, gender_id: int):
             print(f'Page URLs count: {len(page_urls)}')
             print(f'Image URLs count: {len(image_urls)}')
         
-        # 最小の数まで調整
+        # 取得した商品一覧を表示
+        print(f'\n=== 取得した商品一覧 ({min_count}件) ===')
+        for i in range(min_count):
+            print(f'{i+1:2d}: {names[i]:<40} - ¥{prices[i]:>5,} - {product_codes[i]}')
+        
+        # データを最小数に調整
         names = names[:min_count]
         prices = prices[:min_count]
         product_codes = product_codes[:min_count]
