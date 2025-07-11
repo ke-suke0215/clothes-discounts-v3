@@ -53,16 +53,34 @@ def scrape_and_insert(gender: str, gender_id: int):
         # 必要なデータを抽出（2025年7月時点の構造に対応）
         names = [element.text.strip() for element in soup.find_all('h3')]
         
-        # 価格を取得（¥マークを含むテキストを検索）
-        price_elements = soup.find_all(string=re.compile(r'¥\d+'))
-        prices = []
-        for price_text in price_elements:
-            price_match = re.search(r'¥([\d,]+)', price_text)
-            if price_match:
-                prices.append(int(price_match.group(1).replace(',', '')))
-        
-        # 商品リンクを取得
+        # 価格を取得（商品エリア内のみを対象とし、JavaScriptデータを除外）
         product_links = soup.find_all('a', href=re.compile(r'/jp/ja/products/'))
+        prices = []
+        for link in product_links:
+            # 各商品リンク内から価格を検索（期間限定価格表示に対応）
+            price_text = link.get_text()
+            # パターン: ¥1,2907/17まで -> ¥1,290 と 7/17 を分離
+            price_match = re.search(r'¥([\d,]+)(\d+)/(\d+)', price_text)
+            if price_match:
+                # 価格部分と日付部分を分離
+                price_part = price_match.group(1)
+                date_part = price_match.group(2)  # 日付の一部が価格に混在
+                
+                # 価格部分から日付部分を除去
+                if len(date_part) == 1:  # 7/17の場合は7が混在
+                    # 最後の数字を除去
+                    clean_price = price_part[:-1] if price_part[-1] == date_part else price_part
+                    prices.append(int(clean_price.replace(',', '')))
+                else:
+                    # 通常の価格処理
+                    prices.append(int(price_part.replace(',', '')))
+            else:
+                # 通常の価格パターン
+                price_match = re.search(r'¥([\d,]+)', price_text)
+                if price_match:
+                    prices.append(int(price_match.group(1).replace(',', '')))
+        
+        # 商品コードとページURLを取得（価格取得で使用したのと同じリンクを使用）
         product_codes = []
         page_urls = []
         
