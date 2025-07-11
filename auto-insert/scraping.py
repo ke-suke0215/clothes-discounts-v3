@@ -86,8 +86,13 @@ def scrape_and_insert(gender: str, gender_id: int):
         # データの整形とAPIリクエスト
         print(f'Found {len(names)} names, {len(prices)} prices, {len(product_codes)} product codes, {len(image_urls)} images')
         
-        # データの数が一致しない場合の処理を改善
+        # 取得した商品一覧を表示
         min_count = min(len(names), len(prices), len(product_codes), len(page_urls), len(image_urls))
+        print(f'\n=== 取得した商品一覧 ({min_count}件) ===')
+        for i in range(min_count):
+            print(f'{i+1:2d}: {names[i]:<40} - ¥{prices[i]:>5,} - {product_codes[i]}')
+        
+        # データの数が一致しない場合の処理を改善
         
         if min_count == 0:
             print('No products found. Check if the website structure has changed.')
