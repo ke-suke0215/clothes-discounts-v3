@@ -75,6 +75,11 @@ def scrape_and_insert(gender: str, gender_id: int):
             # APIリクエスト
             form = {"productDiscounts": product_discounts}
 
+            # スクレイピング結果が0件の場合はエラーとして扱う
+            if len(product_discounts) == 0:
+                print("No discount products found. Exiting with error.")
+                sys.exit(1)
+
             try:
                 # APIキーをヘッダーに追加
                 headers = {
