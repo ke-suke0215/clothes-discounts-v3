@@ -3,6 +3,7 @@ name: Daily Insert
 on:
   schedule:
     - cron: "0 22 * * *"
+  workflow_dispatch:  # 手動実行を可能にする
 
 jobs:
   insert-men-discount:
