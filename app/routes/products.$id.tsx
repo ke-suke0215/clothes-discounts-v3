@@ -74,8 +74,8 @@ export default function ProductDetail() {
 								mode="multiple"
 								selected={selectedDates}
 								className="w-fit"
-								onDayClick={() => {}}
-								onSelect={() => {}}
+								onDayClick={undefined}
+								onSelect={undefined}
 							/>
 						</div>
 						<div className="mx-auto w-[270px] rounded-lg bg-white p-4">
