@@ -74,3 +74,42 @@ body {
 		@apply bg-background text-foreground;
 	}
 }
+
+@layer components {
+	/* Today + Selected combination - ensure black background for today's selected date */
+	.rdp .rdp-day.rdp-today.rdp-selected .rdp-day_button {
+		background: #000000 !important;
+		color: #ffffff !important;
+	}
+
+	/* FORCE BLACK ARROWS - MAXIMUM PRIORITY */
+	.rdp svg,
+	.rdp-nav svg,
+	.rdp-chevron,
+	.rdp-button_previous svg,
+	.rdp-button_next svg,
+	.rdp-button_previous .rdp-chevron,
+	.rdp-button_next .rdp-chevron,
+	[class*='rdp'] svg,
+	[class*='button_previous'] svg,
+	[class*='button_next'] svg {
+		fill: #000000 !important;
+		color: #000000 !important;
+		stroke: #000000 !important;
+	}
+
+	.rdp svg:hover,
+	.rdp-nav svg:hover,
+	.rdp-chevron:hover,
+	.rdp-button_previous svg:hover,
+	.rdp-button_next svg:hover,
+	.rdp-button_previous:hover .rdp-chevron,
+	.rdp-button_next:hover .rdp-chevron,
+	[class*='rdp'] svg:hover,
+	[class*='button_previous'] svg:hover,
+	[class*='button_next'] svg:hover {
+		fill: #374151 !important;
+		color: #374151 !important;
+		stroke: #374151 !important;
+	}
+}

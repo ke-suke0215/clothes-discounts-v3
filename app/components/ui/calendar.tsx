@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { DayPicker } from 'react-day-picker';
 
 import { cn } from '~/lib/utils';
-import { buttonVariants } from '~/components/ui/button';
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
@@ -13,51 +11,67 @@ function Calendar({
 	showOutsideDays = true,
 	...props
 }: CalendarProps) {
+	// Calendar layout styles
+	const calendarStyles = {
+		container: 'font-inter rounded-lg border border-gray-200 bg-white p-5',
+		monthCaption: 'flex justify-center items-center mb-4 relative',
+		captionLabel: 'text-base font-medium text-gray-900',
+		nav: 'flex justify-between items-center absolute top-0 left-0 right-0 z-10',
+		monthGrid: 'w-full border-separate border-spacing-0.5',
+		weekdays: 'mb-2',
+		weekday:
+			'w-9 h-6 text-xs font-medium text-gray-500 uppercase tracking-wide text-center',
+		day: 'w-9 h-9 relative',
+	};
+
+	// Button styles
+	const buttonStyles = {
+		navigationButton: [
+			'w-8 h-8 rounded-md border border-gray-300 bg-white text-black',
+			'flex items-center justify-center cursor-pointer transition-all duration-150',
+			'hover:bg-gray-100 hover:text-gray-900 hover:border-gray-400',
+			'disabled:opacity-40 disabled:cursor-not-allowed',
+			'[&>svg]:fill-black [&>svg]:text-black [&>svg]:stroke-black',
+			'[&>svg]:!fill-black [&>svg]:!text-black [&>svg]:!stroke-black',
+		].join(' '),
+
+		dayButton: [
+			'w-full h-full border-none bg-transparent cursor-pointer rounded',
+			'text-sm font-normal text-gray-700 flex items-center justify-center',
+			'transition-all duration-150 hover:bg-gray-100 hover:text-gray-900',
+		].join(' '),
+	};
+
+	// Day state styles (using CSS selector targeting)
+	const dayStateStyles = {
+		selected:
+			'[&>button]:bg-gray-600 [&>button]:text-white [&>button]:font-medium [&>button:hover]:bg-gray-700',
+		today:
+			'[&>button]:bg-gray-900 [&>button]:text-white [&>button]:font-medium [&>button:hover]:bg-gray-800',
+		outside:
+			'[&>button]:text-gray-300 [&>button:hover]:bg-gray-50 [&>button:hover]:text-gray-400',
+	};
+
 	return (
 		<DayPicker
 			showOutsideDays={showOutsideDays}
-			className={cn('p-3', className)}
+			className={cn(calendarStyles.container, className)}
+			hideNavigation={false}
 			classNames={{
-				months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
-				month: 'space-y-4',
-				caption: 'flex justify-center pt-1 relative items-center',
-				caption_label: 'text-sm font-medium',
-				nav: 'space-x-1 flex items-center',
-				nav_button: cn(
-					buttonVariants({ variant: 'outline' }),
-					'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100',
-				),
-				nav_button_previous: 'absolute left-1',
-				nav_button_next: 'absolute right-1',
-				table: 'w-full border-collapse space-y-1',
-				head_row: 'flex',
-				head_cell:
-					'text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]',
-				row: 'flex w-full mt-2',
-				cell: 'h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20',
-				day: cn(
-					buttonVariants({ variant: 'ghost' }),
-					'h-9 w-9 p-0 font-normal aria-selected:opacity-100',
-				),
-				day_range_end: 'day-range-end',
-				day_selected:
-					'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
-				day_today: 'bg-accent text-accent-foreground',
-				day_outside:
-					'day-outside text-muted-foreground aria-selected:bg-accent/50 aria-selected:text-muted-foreground',
-				day_disabled: 'text-muted-foreground opacity-50',
-				day_range_middle:
-					'aria-selected:bg-accent aria-selected:text-accent-foreground',
-				day_hidden: 'invisible',
+				month_caption: calendarStyles.monthCaption,
+				caption_label: calendarStyles.captionLabel,
+				nav: calendarStyles.nav,
+				button_previous: buttonStyles.navigationButton,
+				button_next: buttonStyles.navigationButton,
+				month_grid: calendarStyles.monthGrid,
+				weekdays: calendarStyles.weekdays,
+				weekday: calendarStyles.weekday,
+				day: calendarStyles.day,
+				day_button: buttonStyles.dayButton,
+				selected: dayStateStyles.selected,
+				today: dayStateStyles.today,
+				outside: dayStateStyles.outside,
 				...classNames,
-			}}
-			components={{
-				IconLeft: ({ className, ...props }) => (
-					<ChevronLeft className={cn('h-4 w-4', className)} {...props} />
-				),
-				IconRight: ({ className, ...props }) => (
-					<ChevronRight className={cn('h-4 w-4', className)} {...props} />
-				),
 			}}
 			{...props}
 		/>
