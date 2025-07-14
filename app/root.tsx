@@ -8,12 +8,10 @@ import {
 } from '@remix-run/react';
 import stylesheet from '~/tailwind.css?url';
 import dayPickerStyles from 'react-day-picker/style.css?url';
-import calendarFixStyles from '~/styles/calendar-fix.css?url';
 
 export const links: LinksFunction = () => [
 	{ rel: 'stylesheet', href: stylesheet },
 	{ rel: 'stylesheet', href: dayPickerStyles },
-	{ rel: 'stylesheet', href: calendarFixStyles },
 	{ rel: 'preconnect', href: 'https://fonts.googleapis.com' },
 	{
 		rel: 'preconnect',
