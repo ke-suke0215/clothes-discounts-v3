@@ -1,0 +1,33 @@
+/* react-day-picker v9 chevron arrow fix */
+.rdp-chevron {
+	fill: #000000 !important;
+	color: #000000 !important;
+}
+
+.rdp-chevron:hover {
+	fill: #374151 !important;
+	color: #374151 !important;
+}
+
+.rdp-button_previous .rdp-chevron,
+.rdp-button_next .rdp-chevron {
+	fill: #000000 !important;
+	color: #000000 !important;
+}
+
+.rdp-button_previous:hover .rdp-chevron,
+.rdp-button_next:hover .rdp-chevron {
+	fill: #374151 !important;
+	color: #374151 !important;
+}
+
+/* Additional fallback for SVG styling */
+.rdp-nav svg {
+	fill: #000000 !important;
+	color: #000000 !important;
+}
+
+.rdp-nav svg:hover {
+	fill: #374151 !important;
+	color: #374151 !important;
+}

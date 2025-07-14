@@ -24,9 +24,11 @@ function Calendar({
 				caption_label: 'text-base font-medium text-gray-900',
 				nav: 'flex justify-between items-center absolute top-0 left-0 right-0 z-10',
 				button_previous:
-					'w-8 h-8 rounded-md border border-gray-300 bg-white text-gray-800 flex items-center justify-center cursor-pointer transition-all duration-150 hover:bg-gray-100 hover:text-gray-900 hover:border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed',
+					'w-8 h-8 rounded-md border border-gray-300 bg-white text-black flex items-center justify-center cursor-pointer transition-all duration-150 hover:bg-gray-100 hover:text-gray-900 hover:border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed',
 				button_next:
-					'w-8 h-8 rounded-md border border-gray-300 bg-white text-gray-800 flex items-center justify-center cursor-pointer transition-all duration-150 hover:bg-gray-100 hover:text-gray-900 hover:border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed',
+					'w-8 h-8 rounded-md border border-gray-300 bg-white text-black flex items-center justify-center cursor-pointer transition-all duration-150 hover:bg-gray-100 hover:text-gray-900 hover:border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed',
+				chevron:
+					'w-4 h-4 !fill-black fill-current !text-black transition-all duration-150 hover:!fill-gray-900',
 				month_grid: 'w-full border-separate border-spacing-0.5',
 				weekdays: 'mb-2',
 				weekday:
