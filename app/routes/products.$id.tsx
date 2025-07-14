@@ -69,11 +69,13 @@ export default function ProductDetail() {
 				<div>
 					<h2 className="mb-6 text-xl lg:text-2xl">{product.name}</h2>
 					<div className="flex flex-col gap-8 md:flex-row lg:flex-1">
-						<div className="mx-auto rounded-lg bg-white md:mx-0">
+						<div className="mx-auto md:mx-0">
 							<Calendar
 								mode="multiple"
 								selected={selectedDates}
 								className="w-fit"
+								onDayClick={() => {}}
+								onSelect={() => {}}
 							/>
 						</div>
 						<div className="mx-auto w-[270px] rounded-lg bg-white p-4">

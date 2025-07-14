@@ -74,3 +74,11 @@ body {
 		@apply bg-background text-foreground;
 	}
 }
+
+@layer components {
+	/* Today + Selected combination - ensure black background for today's selected date */
+	.rdp .rdp-day.rdp-today.rdp-selected .rdp-day_button {
+		background: #000000 !important;
+		color: #ffffff !important;
+	}
+}

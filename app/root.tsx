@@ -7,9 +7,11 @@ import {
 	ScrollRestoration,
 } from '@remix-run/react';
 import stylesheet from '~/tailwind.css?url';
+import dayPickerStyles from 'react-day-picker/style.css?url';
 
 export const links: LinksFunction = () => [
 	{ rel: 'stylesheet', href: stylesheet },
+	{ rel: 'stylesheet', href: dayPickerStyles },
 	{ rel: 'preconnect', href: 'https://fonts.googleapis.com' },
 	{
 		rel: 'preconnect',
