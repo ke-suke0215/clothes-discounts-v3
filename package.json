@@ -21,7 +21,7 @@
     "*.{js,mjs,ts,tsx,css,md,yml}": "prettier --write"
   },
   "dependencies": {
-    "@markdoc/markdoc": "^0.4.0",
+    "@markdoc/markdoc": "^0.5.2",
     "@prisma/adapter-d1": "^6.0.1",
     "@prisma/client": "^6.0.1",
     "@radix-ui/react-label": "^2.1.1",
