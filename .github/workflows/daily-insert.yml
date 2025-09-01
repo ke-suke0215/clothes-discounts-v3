@@ -16,7 +16,7 @@ jobs:
         INSERT_DISCOUNT_API_KEY: ${{ secrets.INSERT_DISCOUNT_API_KEY }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: exec scraping
         run: python auto-insert/men_scraping.py
 
@@ -33,7 +33,7 @@ jobs:
     if: always()  # menのinsertジョブが失敗しても実行する
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: exec scraping
         run: python auto-insert/women_scraping.py
 
