@@ -45,4 +45,4 @@ jobs:
     if: always()
 
     steps:
-      - uses: Kesin11/actions-timeline@v2
+      - uses: Kesin11/actions-timeline@v3
