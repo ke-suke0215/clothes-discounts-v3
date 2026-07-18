@@ -82,8 +82,8 @@ def scrape_and_insert(gender: str, gender_id: int):
             full_url = UNIQLO_DOMAIN + href if href else None
             page_urls.append(full_url)
             
-            # 画像URL: 最初の画像のsrc
-            image_url = img.get('src') if img else None
+            # 画像URL: 遅延読み込み時はdata-srcに設定される
+            image_url = (img.get('src') or img.get('data-src')) if img else None
             image_urls.append(image_url)
 
         # データの整形とAPIリクエスト
