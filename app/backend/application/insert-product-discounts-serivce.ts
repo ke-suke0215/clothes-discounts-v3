@@ -34,7 +34,19 @@ export default class InsertProductDiscountService {
 
 		const productRepository = new ProductRepository(this._db); // TODO: DI使いたい
 
-		const deliveredProductDiscounts: ProductDiscount[] = form.productDiscounts;
+		// 同じ商品コードの色違いはDB上で1商品として扱う
+		const uniqueProductDiscounts = new Map<string, ProductDiscount>();
+		for (const productDiscount of form.productDiscounts) {
+			if (!uniqueProductDiscounts.has(productDiscount.productCode)) {
+				uniqueProductDiscounts.set(
+					productDiscount.productCode,
+					productDiscount,
+				);
+			}
+		}
+		const deliveredProductDiscounts: ProductDiscount[] = Array.from(
+			uniqueProductDiscounts.values(),
+		);
 
 		const deliveredProductCodes = deliveredProductDiscounts.map(
 			product => product.productCode,
