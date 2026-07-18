@@ -89,10 +89,14 @@ def scrape_and_insert(gender: str, gender_id: int):
         # データの整形とAPIリクエスト
         if len(names) == len(prices) == len(product_codes):
             product_discounts = []
+            added_product_codes = set()
 
             for name, price, product_code, page_url, image_url in zip(names, prices, product_codes, page_urls, image_urls):
                 # Noneの場合はスキップ
                 if not all([name, price, product_code, page_url, image_url]):
+                    continue
+                # 色違いの商品タイルは同じ商品コードを持つため、先頭の1件だけ登録する
+                if product_code in added_product_codes:
                     continue
                 product_discounts.append({
                     "productCode": product_code,
@@ -103,6 +107,7 @@ def scrape_and_insert(gender: str, gender_id: int):
                     "price": price,
                     "date": formatted_date
                 })
+                added_product_codes.add(product_code)
 
             # APIリクエスト
             form = {"productDiscounts": product_discounts}
